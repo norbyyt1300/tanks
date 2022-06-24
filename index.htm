@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tanks</title>
+    <script src="https://unpkg.com/konva@8.3.5/konva.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="rollDice.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            background-image: url("playmat1.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+
+        .tankWoundsColorSwatch {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .tankWoundsLabel {
+            color: rgba(0, 0, 0, .9);
+        }
+
+        #tank1Swatch {
+            color: lightgreen;
+        }
+
+        #tank2Swatch {
+            color: cyan;
+        }
+
+        #tank3Swatch {
+            color: pink;
+        }
+
+        #tank4Swatch {
+            color: orange;
+        }
+
+        .dropdown-menu {
+            width: 240px !important;
+            font-size: 11px;
+        }
+
+        .navbar-brand,
+        .dropdown-toggle,
+        #modalOpenButton {
+            font-size: 11px;
+        }
+
+        .modal-content {
+            width: 500px;
+            height: 500px;
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">40K Simulator</a>
+
+            <!-- Button trigger modal -->
+            <button id="modalOpenButton" type="button" class="btn btn-light" data-bs-toggle="modal"
+                data-bs-target="#diceModal">
+                Roll Dice
+            </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            Wounds
+                        </a>
+                        <ul class="dropdown-menu">
+                            <span id='tank1Swatch' class="tankWoundsColorSwatch">▮</span>
+                            <span class="tankWoundsLabel">Tank 1 Wounds:</span>
+                            <input id="tank1Wounds" class="tankWoundsInput" type="number" min=0 value=0 max=110>
+                            <br>
+                            <span id='tank2Swatch' class="tankWoundsColorSwatch">▮</span>
+                            <span class="tankWoundsLabel">Tank 2 Wounds:</span>
+                            <input id="tank2Wounds" class="tankWoundsInput" type="number" min=0 value=0 max=110>
+                            <br>
+                            <span id='tank3Swatch' class="tankWoundsColorSwatch">▮</span>
+                            <span class="tankWoundsLabel">Tank 3 Wounds:</span>
+                            <input id="tank3Wounds" class="tankWoundsInput" type="number" min=0 value=0 max=110>
+                            <br>
+                            <span id='tank4Swatch' class="tankWoundsColorSwatch">▮</span>
+                            <span class="tankWoundsLabel">Tank 4 Wounds:</span>
+                            <input id="tank4Wounds" class="tankWoundsInput" type="number" min=0 value=0 max=110>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="container"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="diceModal" tabindex="-1" role="dialog" aria-labelledby="diceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="game">
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div id='dice1' class="dice dice-one">
+                                <div id="dice-one-side-one" class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div id="dice-one-side-two" class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div id="dice-one-side-three" class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div id="dice-one-side-four" class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div id="dice-one-side-five" class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div id="dice-one-side-six" class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div id='dice2' class="dice dice-two">
+                                <div id="dice-two-side-one" class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div id="dice-two-side-two" class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div id="dice-two-side-three" class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div id="dice-two-side-four" class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div id="dice-two-side-five" class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div id="dice-two-side-six" class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-three">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-four">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-five">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-six">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-seven">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-eight">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dicecontainer" onclick="toggleVisibility(this)">
+                            <div class="dice dice-nine">
+                                <div class='side one'>
+                                    <div class="dot one-1"></div>
+                                </div>
+                                <div class='side two'>
+                                    <div class="dot two-1"></div>
+                                    <div class="dot two-2"></div>
+                                </div>
+                                <div class='side three'>
+                                    <div class="dot three-1"></div>
+                                    <div class="dot three-2"></div>
+                                    <div class="dot three-3"></div>
+                                </div>
+                                <div class='side four'>
+                                    <div class="dot four-1"></div>
+                                    <div class="dot four-2"></div>
+                                    <div class="dot four-3"></div>
+                                    <div class="dot four-4"></div>
+                                </div>
+                                <div class='side five'>
+                                    <div class="dot five-1"></div>
+                                    <div class="dot five-2"></div>
+                                    <div class="dot five-3"></div>
+                                    <div class="dot five-4"></div>
+                                    <div class="dot five-5"></div>
+                                </div>
+                                <div class='side six'>
+                                    <div class="dot six-1"></div>
+                                    <div class="dot six-2"></div>
+                                    <div class="dot six-3"></div>
+                                    <div class="dot six-4"></div>
+                                    <div class="dot six-5"></div>
+                                    <div class="dot six-6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <br>
+                        <button onclick="reloadDice()" type="button" class="btn btn-light btn-sm">Reload Dice</button>
+                        <button id="roll" type="button" class="btn btn-primary btn-sm">Roll</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var NUM_TERRAIN = 15;
+
+        var TANK_PNG_HEIGHT = 134;
+        var TANK_PNG_WIDTH = 106;
+
+        var TANK_HEIGHT = 60;
+        var TANK_WIDTH = window.innerWidth * 0.04;
+
+        var TANK_IMG_X_SCALE = TANK_WIDTH / TANK_PNG_WIDTH;
+        var TANK_IMG_Y_SCALE = TANK_HEIGHT / TANK_PNG_HEIGHT;
+
+
+
+
+        function makeNewTankRectTransformer(node, anchorColor) {
+            return (new Konva.Transformer({
+                anchorFill: anchorColor,
+                anchorStroke: 'white',
+                borderStroke: 'transparent',
+                nodes: [node],
+                centeredScaling: true,
+                resizeEnabled: false
+            }));
+        }
+
+
+        function makeNewTankRect(image, x, extraHeight, extraWidth) {
+            return (new Konva.Rect({
+                x: x,
+                y: 70,
+                width: TANK_WIDTH + extraWidth,
+                height: TANK_HEIGHT + extraHeight,
+                fillPatternImage: image,
+                draggable: true,
+                fillPatternScaleX: TANK_IMG_X_SCALE,
+                fillPatternScaleY: TANK_IMG_Y_SCALE,
+                fillPatternRepeat: "no-repeat",
+                text: "0"
+            }));
+        }
+
+        function makeNewTerrainPolygon() {
+            return (new Konva.RegularPolygon({
+                x: 20 + Math.random() * (window.innerWidth - 20),
+                y: 20 + Math.random() * (window.innerHeight - 20),
+                sides: Math.floor(5 + Math.random() * 6),
+                radius: 5 + Math.floor(20 * Math.random()),
+                fill: '#202020',
+                stroke: 'gray',
+                strokeWidth: 1,
+            }));
+        }
+
+
+
+        function loadImages(sources, callback) {
+            var images = {};
+            var loadedImages = 0;
+            var numImages = 0;
+            // get num of sources
+            for (var src in sources) {
+                numImages++;
+            }
+            for (var src in sources) {
+                images[src] = new Image();
+                images[src].onload = function () {
+                    if (++loadedImages >= numImages) {
+                        callback(images);
+                    }
+                };
+                images[src].src = sources[src];
+            }
+        }
+        function draw(images) {
+            var stage = new Konva.Stage({
+                container: 'container',
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+            var layer = new Konva.Layer();
+            stage.add(layer);
+
+            for (var i = 0; i < NUM_TERRAIN; i++) {
+                layer.add(makeNewTerrainPolygon());
+            }
+
+            var tankRect1 = makeNewTankRect(images.tank1, 100, 0, 0);
+            var tankRect2 = makeNewTankRect(images.tank2, 200, 5, 0);
+            var tankRect3 = makeNewTankRect(images.tank3, 300, 5, -8);
+            var tankRect4 = makeNewTankRect(images.tank4, 400, 0, 0);
+
+            layer.add(tankRect1);
+            layer.add(tankRect2);
+            layer.add(tankRect3);
+            layer.add(tankRect4);
+
+            layer.add(makeNewTankRectTransformer(tankRect1, "lightgreen"));
+            layer.add(makeNewTankRectTransformer(tankRect2, "cyan"));
+            layer.add(makeNewTankRectTransformer(tankRect3, "pink"));
+            layer.add(makeNewTankRectTransformer(tankRect4, "orange"));
+
+        }
+
+        var sources = {
+            tank1: 'tank1.png',
+            tank2: 'tank2.png',
+            tank3: 'tank3.png',
+            tank4: 'tank4.png',
+        };
+
+        loadImages(sources, function (images) {
+            draw(images);
+        });
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
+    
+    <script src="rollDice.js"></script>
+
+</body>
+
+</html>
